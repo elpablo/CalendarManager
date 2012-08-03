@@ -46,7 +46,7 @@
 #endif
 }
 
-- (NSArray *)fetchEventsForToday
+- (NSArray *)eventsForToday
 {
 	NSDate *startDate = [NSDate date];
 	
@@ -57,6 +57,19 @@
 	NSArray *calendarArray = [NSArray arrayWithObject:_defaultCalendar];
 	NSPredicate *predicate = [self.eventStore predicateForEventsWithStartDate:startDate endDate:endDate 
                                                                     calendars:calendarArray]; 
+	
+	// Fetch all events that match the predicate.
+	NSArray *events = [self.eventStore eventsMatchingPredicate:predicate];
+    
+	return events;
+}
+
+- (NSArray *)eventsForCalendar:(EKCalendar *)cal fromDate:(NSDate *)startDate toDate:(NSDate *)endDate
+{
+	// Create the predicate. Pass it the calendar.
+	NSArray *calendarArray = [NSArray arrayWithObject:cal];
+	NSPredicate *predicate = [self.eventStore predicateForEventsWithStartDate:startDate endDate:endDate
+                                                                    calendars:calendarArray];
 	
 	// Fetch all events that match the predicate.
 	NSArray *events = [self.eventStore eventsMatchingPredicate:predicate];
@@ -98,6 +111,21 @@
     return sourceTypeArr;
 }
 
+- (NSArray *)localCalendars
+{
+    return [self calendarSourcesOfTypes:EKSourceTypeLocal];
+}
+
+- (NSArray *)calDavCalendars
+{
+    return [self calendarSourcesOfTypes:EKSourceTypeCalDAV];
+}
+
+- (NSArray *)birthdayCalendars
+{
+    return [self calendarSourcesOfTypes:EKSourceTypeBirthdays];
+}
+
 - (BOOL)addCalendarWithSourceType:(EKSource *)source name:(NSString *)calName makeDefault:(BOOL)def
 {
     EKCalendar *newCal = [EKCalendar calendarWithEventStore:self.eventStore];
@@ -109,7 +137,7 @@
     NSError *err;
     BOOL ok = [self.eventStore saveCalendar:newCal commit:YES error:&err];
     if (ok && def) {
-        [self.delegate PQCalendarManager:self didCreateCalendarWithIdentifier:newCal.calendarIdentifier];
+        [self.delegate calendarManager:self didCreateCalendarWithIdentifier:newCal.calendarIdentifier];
         self.defaultCalendar = newCal;
     }
     
@@ -159,9 +187,9 @@
     ev.calendar = self.defaultCalendar;
     ev.notes = note;
 
-    [self.delegate PQCalendarManager:self didCreateEvent:ev];
+    [self.delegate calendarManager:self didCreateEvent:ev];
 	// present EventsAddViewController as a modal view controller
-    [self.delegate PQCalendarManager:self needToPresentController:addController];
+    [self.delegate calendarManager:self needToPresentController:addController];
 	
 #if __has_feature(objc_arc)
 #else
@@ -196,7 +224,6 @@
 		case EKEventEditViewActionSaved:
 			// When user hit "Done" button, save the newly created event to the event store
             [self saveEvent:controller.event];
-//			[controller.eventStore saveEvent:controller.event span:EKSpanThisEvent error:&error];
 			break;
 			
 		case EKEventEditViewActionDeleted:
@@ -208,7 +235,7 @@
 			break;
 	}
 	// Dismiss the modal view controller
-	[self.delegate PQCalendarManagerDidDismissCalendarEditController:self];
+	[self.delegate calendarManagerDidDismissCalendarEditController:self];
 }
 
 // Set the calendar edited by EKEventEditViewController to our chosen calendar - the default calendar.
