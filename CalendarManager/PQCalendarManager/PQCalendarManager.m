@@ -1,8 +1,8 @@
 //
 //  PQCalendarManager.m
-//  TestEvent
+//  CalendarManager
 //
-//  Created by Quadrani Paolo on 27/05/12.
+//  Created by Quadrani Paolo on 04/08/12.
 //  Copyright (c) 2012 Paolo Quadrani. All rights reserved.
 //
 
@@ -234,6 +234,7 @@
 		default:
 			break;
 	}
+    
 	// Dismiss the modal view controller
 	[self.delegate calendarManagerDidDismissCalendarEditController:self];
 }
