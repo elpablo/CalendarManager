@@ -92,12 +92,18 @@
 
 @protocol PQCalendarManagerDelegate <NSObject>
 
-- (void)calendarManager:(PQCalendarManager *)adder didCreateEvent:(EKEvent *)ev;
-
 @optional
 
+/// Inform the delegate that a new calendar has been created.
 - (void)calendarManager:(PQCalendarManager *)manager didCreateCalendarWithIdentifier:(NSString *)identifier;
+
+/// Inform the delegate that a new event has been created.
+- (void)calendarManager:(PQCalendarManager *)adder didCreateEvent:(EKEvent *)ev;
+
+/// Ask the delegate that the EKEventEditViewController has to be presented to the user. This is called afted that a new event has beed created and needs to be edited by the user.
 - (void)calendarManager:(PQCalendarManager *)manager needToPresentController:(EKEventEditViewController *)controller;
+
+/// Ask the user to dismiss the EKEventEditViewController needs to be dismissed because the user finished to edit the created event.
 - (void)calendarManagerDidDismissCalendarEditController:(PQCalendarManager *)manager;
 
 @end
