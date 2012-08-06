@@ -25,6 +25,8 @@
 @property (nonatomic, strong) EKEventStore *eventStore;
 @property (nonatomic, strong) EKCalendar *defaultCalendar;
 
+- (NSArray *)extractCalendarsFromSourceArray:(NSArray *)sources;
+
 @end
 
 
@@ -34,60 +36,52 @@
 @synthesize defaultCalendar = _defaultCalendar;
 @synthesize delegate = _delegate;
 
-- (id)init
-{
-    self = [super init];
-    if (self) {
-        // Initialize an event store object with the init method. Initilize the array for events.
-        self.eventStore = [[EKEventStore alloc] init];
-        
-        // Get the default calendar from store.
-        self.defaultCalendar = [self.eventStore defaultCalendarForNewEvents];
-    }
-    return self;
+- (void)_initParameters {
+    // Initialize an event store object with the init method. Initilize the array for events.
+    self.eventStore = [[EKEventStore alloc] init];
+    
+    // Get the default calendar from store.
+    self.defaultCalendar = [self.eventStore defaultCalendarForNewEvents];
 }
 
-- (void)dealloc
-{
-    self.eventStore = nil;
-    self.defaultCalendar = nil;
-    
++ (PQCalendarManager *)sharedInstance {
+    static dispatch_once_t once;
+    static id sharedInstance;
+    dispatch_once(&once, ^{
+        sharedInstance = [[self alloc] init];
+        [sharedInstance _initParameters];
+    });
+    return sharedInstance;
+}
+
+#pragma mark - Memory Management
+
 #if __has_feature(objc_arc)
 #else
+- (NSUInteger)retainCount {
+    return (NSUIntegerMax);
+}
+
+- (oneway void)release {
+}
+
+- (id)autorelease {
+    return (self);
+}
+
+- (id)retain {
+    return (self);
+}
+
+- (void)dealloc {
+    self.eventStore = nil;
+    self.defaultCalendar = nil;
+
     [super dealloc];
+}
 #endif
-}
 
-- (NSArray *)eventsForToday
-{
-	NSDate *startDate = [NSDate date];
-	
-	// endDate is 1 day = 60*60*24 seconds = 86400 seconds from startDate
-	NSDate *endDate = [NSDate dateWithTimeIntervalSinceNow:86400];
-	
-	// Create the predicate. Pass it the default calendar.
-	NSArray *calendarArray = [NSArray arrayWithObject:_defaultCalendar];
-	NSPredicate *predicate = [self.eventStore predicateForEventsWithStartDate:startDate endDate:endDate 
-                                                                    calendars:calendarArray]; 
-	
-	// Fetch all events that match the predicate.
-	NSArray *events = [self.eventStore eventsMatchingPredicate:predicate];
-    
-	return events;
-}
-
-- (NSArray *)eventsForCalendar:(EKCalendar *)cal fromDate:(NSDate *)startDate toDate:(NSDate *)endDate
-{
-	// Create the predicate. Pass it the calendar.
-	NSArray *calendarArray = [NSArray arrayWithObject:cal];
-	NSPredicate *predicate = [self.eventStore predicateForEventsWithStartDate:startDate endDate:endDate
-                                                                    calendars:calendarArray];
-	
-	// Fetch all events that match the predicate.
-	NSArray *events = [self.eventStore eventsMatchingPredicate:predicate];
-    
-	return events;
-}
+#pragma mark - Calendar API
 
 - (BOOL)iCloudCalendarIsPresent
 {
@@ -105,82 +99,141 @@
     } else if ([cal count] > 1) {
         NSLog(@"Too many calendars with this name: %@", [cal description]);
     }
-//    BOOL res;
-//    NSError *err;
-//    for (EKCalendar *c in cal) {
-//        res = [self.eventStore removeCalendar:c commit:NO error:&err];
-//    }
-//    res = [self.eventStore commit:&err];
-//    if (err) {
-//        NSLog(@"Err: %@", err);
-//    }
 }
 
-- (NSArray *)calendarSourcesOfTypes:(EKSourceType)type
+- (BOOL)removeCalendar:(EKCalendar *)calendar error:(NSError **)error
+{
+    if (calendar) {
+        BOOL result = YES;
+        result = [self.eventStore removeCalendar:calendar commit:NO error:error];
+        result = result && [self.eventStore commit:error];
+        return result;
+    }
+    return NO;
+}
+
+- (NSArray *)calendarSourcesOfType:(EKSourceType)type
 {
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"sourceType==%d", type];
     NSArray *sourceTypeArr = [self.eventStore.sources filteredArrayUsingPredicate:predicate];
     return sourceTypeArr;
 }
 
+- (NSArray *)extractCalendarsFromSourceArray:(NSArray *)sources
+{
+    NSArray *calendars = nil;
+    if ([sources count] != 0) {
+        NSMutableArray *allCalendars = [[NSMutableArray alloc] init];
+        for (EKSource *source in sources) {
+            [allCalendars addObjectsFromArray:[source.calendars allObjects]];
+        }
+        calendars = [allCalendars copy];
+#if __has_feature(objc_arc)
+#else
+        [allLocalCalendars release];
+#endif
+    } else {
+        NSLog(@"Empty sources passed...");
+    }
+    
+    return calendars;
+}
+
 - (NSArray *)localCalendars
 {
-    return [self calendarSourcesOfTypes:EKSourceTypeLocal];
+    NSArray *sources = [self calendarSourcesOfType:EKSourceTypeLocal];
+    return [self extractCalendarsFromSourceArray:sources];
 }
 
 - (NSArray *)calDavCalendars
 {
-    return [self calendarSourcesOfTypes:EKSourceTypeCalDAV];
+    NSArray *sources = [self calendarSourcesOfType:EKSourceTypeCalDAV];
+    return [self extractCalendarsFromSourceArray:sources];
 }
 
-- (NSArray *)birthdayCalendars
+- (NSArray *)birthdaysCalendars
 {
-    return [self calendarSourcesOfTypes:EKSourceTypeBirthdays];
+    NSArray *sources = [self calendarSourcesOfType:EKSourceTypeBirthdays];
+    return [self extractCalendarsFromSourceArray:sources];
 }
 
-- (BOOL)addCalendarWithSourceType:(EKSource *)source name:(NSString *)calName makeDefault:(BOOL)def
+- (EKCalendar *)addCalendarWithSource:(EKSource *)source name:(NSString *)calName color:(UIColor *)color makeDefault:(BOOL)def error:(NSError **)error
 {
-    EKCalendar *newCal = [EKCalendar calendarWithEventStore:self.eventStore];
-    newCal.title = calName;
-    newCal.CGColor = [[UIColor greenColor] CGColor];
-    // Should be only one iCloud calendar.
-    newCal.source = source;
-    
-    NSError *err;
-    BOOL ok = [self.eventStore saveCalendar:newCal commit:YES error:&err];
-    if (ok && def) {
-        [self.delegate calendarManager:self didCreateCalendarWithIdentifier:newCal.calendarIdentifier];
-        self.defaultCalendar = newCal;
+    EKCalendar *newCal = nil;
+    if (source) {
+        newCal = [EKCalendar calendarWithEventStore:self.eventStore];
+        newCal.title = calName;
+        newCal.CGColor = [color CGColor];
+        // Should be only one iCloud calendar source.
+        newCal.source = source;
+        
+        BOOL ok = [self.eventStore saveCalendar:newCal commit:YES error:error];
+        if (ok && def) {
+            [self.delegate calendarManager:self didCreateCalendarWithIdentifier:newCal.calendarIdentifier];
+            self.defaultCalendar = newCal;
+        }
+    } else {
+        NSLog(@"nil source passed!!");
     }
     
-    return ok;
-//    BOOL ok = NO;
-//    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"sourceType==%d && title==%@", EKSourceTypeCalDAV, @"iCloud"];
-//    NSArray *sourceTypeArr = [self.eventStore.sources filteredArrayUsingPredicate:predicate];
-//    if ([sourceTypeArr count] != 0) {
-//        EKCalendar *newCal = [EKCalendar calendarWithEventStore:self.eventStore];
-//        newCal.title = calName;
-//        newCal.CGColor = [[UIColor greenColor] CGColor];
-//        // Should be only one iCloud calendar.
-//        newCal.source = [sourceTypeArr objectAtIndex:0];
-//        
-//        NSError *err;
-//        ok = [self.eventStore saveCalendar:newCal commit:YES error:&err];
-//        if (ok && def) {
-//            [self setDefaultCalendarWithName:calName];
-//        }
-//    }
-//
-//    return ok;
+    return newCal;
 }
 
-- (EKAlarm *)createAlarmOfMinutes:(NSInteger)min
+#pragma mark - Events API
+
+- (NSArray *)eventsForTodayInCalendar:(EKCalendar *)cal
+{
+    // Now is the start date
+	NSDate *startDate = [NSDate date];
+	
+	// endDate is 1 day = 60*60*24 seconds = 86400 seconds from startDate
+	NSDate *endDate = [NSDate dateWithTimeIntervalSinceNow:86400];
+    
+	return [self eventsForCalendar:cal fromDate:startDate toDate:endDate];
+}
+
+- (NSArray *)eventsForCurrentMonthInCalendar:(EKCalendar *)cal
+{
+    // Retrieve the calendar to calculate the first and last day of the current month
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    [calendar setTimeZone:[NSTimeZone localTimeZone]];
+
+    NSDateComponents *components = [calendar components: NSMonthCalendarUnit|NSYearCalendarUnit
+                                                    fromDate:[NSDate date]];
+    components.day = 1;
+    NSDate *startDate = [calendar dateFromComponents: components];
+
+    NSRange range = [calendar rangeOfUnit:NSDayCalendarUnit inUnit:NSMonthCalendarUnit
+                                       forDate:startDate];
+    components.day = range.length;
+    
+	// endDate is last day of month
+	NSDate *endDate = [calendar dateFromComponents: components];
+
+    return [self eventsForCalendar:cal fromDate:startDate toDate:endDate];
+}
+
+- (NSArray *)eventsForCalendar:(EKCalendar *)cal fromDate:(NSDate *)startDate toDate:(NSDate *)endDate
+{
+	// Create the predicate. Pass it the calendar.
+    EKCalendar *calendar = cal ? cal : _defaultCalendar;
+	NSArray *calendarArray = [NSArray arrayWithObject:calendar];
+	NSPredicate *predicate = [self.eventStore predicateForEventsWithStartDate:startDate endDate:endDate
+                                                                    calendars:calendarArray];
+	
+	// Fetch all events that match the predicate.
+	NSArray *events = [self.eventStore eventsMatchingPredicate:predicate];
+    
+	return events;
+}
+
+- (EKAlarm *)createAlarmOfMinutes:(NSUInteger)min
 {
     NSTimeInterval offset = -60 * min;
     return [EKAlarm alarmWithRelativeOffset:offset];
 }
 
-- (void)addEventWithTitle:(NSString *)t location:(NSString *)loc startDate:(NSDate *)start endDate:(NSDate *)end description:(NSString *)note
+- (void)addEventToCalendar:(EKCalendar *)cal withTitle:(NSString *)t location:(NSString *)loc startDate:(NSDate *)start endDate:(NSDate *)end description:(NSString *)note
 {
     // When add button is pushed, create an EKEventEditViewController to display the event.
 	EKEventEditViewController *addController = [[EKEventEditViewController alloc] initWithNibName:nil bundle:nil];
@@ -196,7 +249,7 @@
     ev.startDate = start;
     ev.endDate = end;
     ev.allDay = NO;
-    ev.calendar = self.defaultCalendar;
+    ev.calendar = cal ? cal : self.defaultCalendar;
     ev.notes = note;
 
     [self.delegate calendarManager:self didCreateEvent:ev];
@@ -209,14 +262,9 @@
 #endif
 }
 
-- (BOOL)saveEvent:(EKEvent *)ev
+- (BOOL)saveEvent:(EKEvent *)ev error:(NSError **)error
 {
-    NSError *err;
-    BOOL ok = [self.eventStore saveEvent:ev span:EKSpanThisEvent error:&err];
-    if (err) {
-        NSLog(@"Error: %@", err);
-    }
-    return ok;
+    return [self.eventStore saveEvent:ev span:EKSpanThisEvent error:error];
 }
 
 #pragma mark - EKEventEditViewDelegate
@@ -235,7 +283,7 @@
 			
 		case EKEventEditViewActionSaved:
 			// When user hit "Done" button, save the newly created event to the event store
-            [self saveEvent:controller.event];
+            [self saveEvent:controller.event error:&error];
 			break;
 			
 		case EKEventEditViewActionDeleted:

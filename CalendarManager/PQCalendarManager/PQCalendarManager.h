@@ -29,23 +29,33 @@
 
 @property (nonatomic, assign) id<PQCalendarManagerDelegate> delegate;
 
-// Calendar API
++ (PQCalendarManager *)sharedInstance;
+
+
+/////////////////////// Calendar API ///////////////////////
+
 - (BOOL)iCloudCalendarIsPresent;
 - (void)setDefaultCalendarWithName:(NSString *)calName;
 
-- (NSArray *)calendarSourcesOfTypes:(EKSourceType)type;
+- (NSArray *)calendarSourcesOfType:(EKSourceType)type;
 - (NSArray *)localCalendars;
 - (NSArray *)calDavCalendars;
-- (NSArray *)birthdayCalendars;
+- (NSArray *)birthdaysCalendars;
 
-- (BOOL)addCalendarWithSourceType:(EKSource *)source name:(NSString *)calName makeDefault:(BOOL)def;
+- (EKCalendar *)addCalendarWithSource:(EKSource *)source name:(NSString *)calName color:(UIColor *)c makeDefault:(BOOL)def error:(NSError **)error;
+- (BOOL)removeCalendar:(EKCalendar *)calendar error:(NSError **)error;
 
-// Event API
-- (NSArray *)eventsForToday;
+
+/////////////////////// Event API ///////////////////////
+
+/// Show the events for today from the given calendar. Pass nil to fetch events from default calendar.
+- (NSArray *)eventsForTodayInCalendar:(EKCalendar *)cal;
+/// Show the events for current month from the given calendar. Pass nil to fetch events from default calendar.
+- (NSArray *)eventsForCurrentMonthInCalendar:(EKCalendar *)cal;
 - (NSArray *)eventsForCalendar:(EKCalendar *)cal fromDate:(NSDate *)startDate toDate:(NSDate *)endDate;
-- (void)addEventWithTitle:(NSString *)t location:(NSString *)loc startDate:(NSDate *)start endDate:(NSDate *)end description:(NSString *)note;
-- (BOOL)saveEvent:(EKEvent *)ev;
-- (EKAlarm *)createAlarmOfMinutes:(NSInteger)min;
+- (void)addEventToCalendar:(EKCalendar *)cal withTitle:(NSString *)t location:(NSString *)loc startDate:(NSDate *)start endDate:(NSDate *)end description:(NSString *)note;
+- (BOOL)saveEvent:(EKEvent *)ev error:(NSError **)error;
+- (EKAlarm *)createAlarmOfMinutes:(NSUInteger)min;
 
 @end
 
