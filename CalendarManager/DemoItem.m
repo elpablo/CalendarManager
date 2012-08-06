@@ -10,11 +10,11 @@
 
 @implementation DemoItem
 
-- (id)initWithName:(NSString *)n target:(id)t andSelectoToExecute:(SEL)selector
+- (id)initWithTitle:(NSString *)n target:(id)t andSelectoToExecute:(SEL)selector
 {
     self = [super init];
     if (self) {
-        self.name = n;
+        self.title = n;
         self.selectorToExecute = selector;
         self.target = t;
     }
@@ -23,7 +23,7 @@
 
 - (void)executeSelector
 {
-    [self.target performSelectorInBackground:self.selectorToExecute withObject:nil];
+    [self.target performSelectorOnMainThread:self.selectorToExecute withObject:nil waitUntilDone:NO];
 }
 
 @end

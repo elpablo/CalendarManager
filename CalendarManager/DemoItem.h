@@ -10,11 +10,11 @@
 
 @interface DemoItem : NSObject
 
-@property (nonatomic, strong) NSString *name;
+@property (nonatomic, strong) NSString *title;
 @property (nonatomic, assign) SEL selectorToExecute;
 @property (nonatomic, assign) id target;
 
-- (id)initWithName:(NSString *)n target:(id)t andSelectoToExecute:(SEL)selector;
+- (id)initWithTitle:(NSString *)n target:(id)t andSelectoToExecute:(SEL)selector;
 - (void)executeSelector;
 
 @end
