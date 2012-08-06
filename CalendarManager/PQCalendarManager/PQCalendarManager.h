@@ -52,8 +52,8 @@
 /// Check the existance of any iCloud calendar.
 - (BOOL)iCloudCalendarIsPresent;
 
-/// Allows to add a new calendar to the given calendar source. The created calendar is returned if no errors occourred nil otherwise.
-- (EKCalendar *)addCalendarWithSource:(EKSource *)source name:(NSString *)calName color:(UIColor *)c makeDefault:(BOOL)def error:(NSError **)error;
+/// Allows to add a new calendar to the given calendar source. The created calendar is returned through the delegate method if no errors occourred.
+- (void)addCalendarWithSource:(EKSource *)source name:(NSString *)calName color:(UIColor *)c makeDefault:(BOOL)def error:(NSError **)error;
 
 /// Allows to remove the given calendar.
 - (BOOL)removeCalendar:(EKCalendar *)calendar error:(NSError **)error;
@@ -95,7 +95,7 @@
 @optional
 
 /// Inform the delegate that a new calendar has been created.
-- (void)calendarManager:(PQCalendarManager *)manager didCreateCalendarWithIdentifier:(NSString *)identifier;
+- (void)calendarManager:(PQCalendarManager *)manager didCreateCalendar:(EKCalendar *)calendar;
 
 /// Inform the delegate that a new event has been created.
 - (void)calendarManager:(PQCalendarManager *)adder didCreateEvent:(EKEvent *)ev;
