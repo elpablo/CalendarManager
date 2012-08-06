@@ -7,6 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0183382615CD2289003095F5 /* ItemsViewerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0183382415CD2289003095F5 /* ItemsViewerViewController.m */; };
+		0183382715CD2289003095F5 /* ItemsViewerViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0183382515CD2289003095F5 /* ItemsViewerViewController.xib */; };
+		0183382B15CD2B3A003095F5 /* DemoItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 0183382A15CD2B3A003095F5 /* DemoItem.m */; };
+		0183388015CD6263003095F5 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0183387F15CD6263003095F5 /* SenTestingKit.framework */; };
+		0183388115CD6263003095F5 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01E0102615CC5E3A00B9AC9C /* UIKit.framework */; };
+		0183388215CD6263003095F5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01E0102815CC5E3A00B9AC9C /* Foundation.framework */; };
+		0183388815CD6263003095F5 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0183388615CD6263003095F5 /* InfoPlist.strings */; };
+		0183388B15CD6263003095F5 /* CalendarManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0183388A15CD6263003095F5 /* CalendarManagerTests.m */; };
+		0183389215CD6813003095F5 /* PQCalendarManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 01E0104915CC5E8A00B9AC9C /* PQCalendarManager.m */; };
+		0183389315CD6A96003095F5 /* EventKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01E0104315CC5E4E00B9AC9C /* EventKit.framework */; };
+		0183389415CD6AB9003095F5 /* EventKitUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01E0104415CC5E4E00B9AC9C /* EventKitUI.framework */; };
 		01E0102715CC5E3A00B9AC9C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01E0102615CC5E3A00B9AC9C /* UIKit.framework */; };
 		01E0102915CC5E3A00B9AC9C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01E0102815CC5E3A00B9AC9C /* Foundation.framework */; };
 		01E0102B15CC5E3A00B9AC9C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01E0102A15CC5E3A00B9AC9C /* CoreGraphics.framework */; };
@@ -20,7 +31,29 @@
 		01E0104A15CC5E8A00B9AC9C /* PQCalendarManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 01E0104915CC5E8A00B9AC9C /* PQCalendarManager.m */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		0183389015CD64D9003095F5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 01E0101915CC5E3A00B9AC9C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 01E0102115CC5E3A00B9AC9C;
+			remoteInfo = CalendarManager;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		0183382315CD2289003095F5 /* ItemsViewerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ItemsViewerViewController.h; sourceTree = "<group>"; };
+		0183382415CD2289003095F5 /* ItemsViewerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ItemsViewerViewController.m; sourceTree = "<group>"; };
+		0183382515CD2289003095F5 /* ItemsViewerViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ItemsViewerViewController.xib; sourceTree = "<group>"; };
+		0183382915CD2B3A003095F5 /* DemoItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DemoItem.h; sourceTree = "<group>"; };
+		0183382A15CD2B3A003095F5 /* DemoItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DemoItem.m; sourceTree = "<group>"; };
+		0183387E15CD6263003095F5 /* CalendarManagerTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CalendarManagerTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		0183387F15CD6263003095F5 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
+		0183388515CD6263003095F5 /* CalendarManagerTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "CalendarManagerTests-Info.plist"; sourceTree = "<group>"; };
+		0183388715CD6263003095F5 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		0183388915CD6263003095F5 /* CalendarManagerTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CalendarManagerTests.h; sourceTree = "<group>"; };
+		0183388A15CD6263003095F5 /* CalendarManagerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CalendarManagerTests.m; sourceTree = "<group>"; };
+		0183388C15CD6263003095F5 /* CalendarManagerTests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CalendarManagerTests-Prefix.pch"; sourceTree = "<group>"; };
 		01E0102215CC5E3A00B9AC9C /* CalendarManager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CalendarManager.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		01E0102615CC5E3A00B9AC9C /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		01E0102815CC5E3A00B9AC9C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -41,6 +74,18 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		0183387A15CD6263003095F5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0183389415CD6AB9003095F5 /* EventKitUI.framework in Frameworks */,
+				0183389315CD6A96003095F5 /* EventKit.framework in Frameworks */,
+				0183388015CD6263003095F5 /* SenTestingKit.framework in Frameworks */,
+				0183388115CD6263003095F5 /* UIKit.framework in Frameworks */,
+				0183388215CD6263003095F5 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		01E0101F15CC5E3A00B9AC9C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -56,10 +101,31 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0183388315CD6263003095F5 /* CalendarManagerTests */ = {
+			isa = PBXGroup;
+			children = (
+				0183388915CD6263003095F5 /* CalendarManagerTests.h */,
+				0183388A15CD6263003095F5 /* CalendarManagerTests.m */,
+				0183388415CD6263003095F5 /* Supporting Files */,
+			);
+			path = CalendarManagerTests;
+			sourceTree = "<group>";
+		};
+		0183388415CD6263003095F5 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				0183388515CD6263003095F5 /* CalendarManagerTests-Info.plist */,
+				0183388615CD6263003095F5 /* InfoPlist.strings */,
+				0183388C15CD6263003095F5 /* CalendarManagerTests-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		01E0101715CC5E3A00B9AC9C = {
 			isa = PBXGroup;
 			children = (
 				01E0102C15CC5E3A00B9AC9C /* CalendarManager */,
+				0183388315CD6263003095F5 /* CalendarManagerTests */,
 				01E0102515CC5E3A00B9AC9C /* Frameworks */,
 				01E0102315CC5E3A00B9AC9C /* Products */,
 			);
@@ -69,6 +135,7 @@
 			isa = PBXGroup;
 			children = (
 				01E0102215CC5E3A00B9AC9C /* CalendarManager.app */,
+				0183387E15CD6263003095F5 /* CalendarManagerTests.octest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -81,6 +148,7 @@
 				01E0102615CC5E3A00B9AC9C /* UIKit.framework */,
 				01E0102815CC5E3A00B9AC9C /* Foundation.framework */,
 				01E0102A15CC5E3A00B9AC9C /* CoreGraphics.framework */,
+				0183387F15CD6263003095F5 /* SenTestingKit.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -94,6 +162,11 @@
 				01E0103815CC5E3A00B9AC9C /* ViewController.h */,
 				01E0103915CC5E3A00B9AC9C /* ViewController.m */,
 				01E0103B15CC5E3A00B9AC9C /* ViewController.xib */,
+				0183382315CD2289003095F5 /* ItemsViewerViewController.h */,
+				0183382415CD2289003095F5 /* ItemsViewerViewController.m */,
+				0183382515CD2289003095F5 /* ItemsViewerViewController.xib */,
+				0183382915CD2B3A003095F5 /* DemoItem.h */,
+				0183382A15CD2B3A003095F5 /* DemoItem.m */,
 				01E0102D15CC5E3A00B9AC9C /* Supporting Files */,
 			);
 			path = CalendarManager;
@@ -122,6 +195,25 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		0183387D15CD6263003095F5 /* CalendarManagerTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0183388D15CD6263003095F5 /* Build configuration list for PBXNativeTarget "CalendarManagerTests" */;
+			buildPhases = (
+				0183387915CD6263003095F5 /* Sources */,
+				0183387A15CD6263003095F5 /* Frameworks */,
+				0183387B15CD6263003095F5 /* Resources */,
+				0183387C15CD6263003095F5 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0183389115CD64D9003095F5 /* PBXTargetDependency */,
+			);
+			name = CalendarManagerTests;
+			productName = CalendarManagerTests;
+			productReference = 0183387E15CD6263003095F5 /* CalendarManagerTests.octest */;
+			productType = "com.apple.product-type.bundle";
+		};
 		01E0102115CC5E3A00B9AC9C /* CalendarManager */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 01E0104015CC5E3A00B9AC9C /* Build configuration list for PBXNativeTarget "CalendarManager" */;
@@ -161,23 +253,58 @@
 			projectRoot = "";
 			targets = (
 				01E0102115CC5E3A00B9AC9C /* CalendarManager */,
+				0183387D15CD6263003095F5 /* CalendarManagerTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		0183387B15CD6263003095F5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0183388815CD6263003095F5 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		01E0102015CC5E3A00B9AC9C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				01E0103115CC5E3A00B9AC9C /* InfoPlist.strings in Resources */,
 				01E0103D15CC5E3A00B9AC9C /* ViewController.xib in Resources */,
+				0183382715CD2289003095F5 /* ItemsViewerViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		0183387C15CD6263003095F5 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
+		0183387915CD6263003095F5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0183388B15CD6263003095F5 /* CalendarManagerTests.m in Sources */,
+				0183389215CD6813003095F5 /* PQCalendarManager.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		01E0101E15CC5E3A00B9AC9C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -186,12 +313,30 @@
 				01E0103715CC5E3A00B9AC9C /* AppDelegate.m in Sources */,
 				01E0103A15CC5E3A00B9AC9C /* ViewController.m in Sources */,
 				01E0104A15CC5E8A00B9AC9C /* PQCalendarManager.m in Sources */,
+				0183382615CD2289003095F5 /* ItemsViewerViewController.m in Sources */,
+				0183382B15CD2B3A003095F5 /* DemoItem.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		0183389115CD64D9003095F5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 01E0102115CC5E3A00B9AC9C /* CalendarManager */;
+			targetProxy = 0183389015CD64D9003095F5 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin PBXVariantGroup section */
+		0183388615CD6263003095F5 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				0183388715CD6263003095F5 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
 		01E0102F15CC5E3A00B9AC9C /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -211,6 +356,36 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		0183388E15CD6263003095F5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
+					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "CalendarManagerTests/CalendarManagerTests-Prefix.pch";
+				INFOPLIST_FILE = "CalendarManagerTests/CalendarManagerTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+		0183388F15CD6263003095F5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
+					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "CalendarManagerTests/CalendarManagerTests-Prefix.pch";
+				INFOPLIST_FILE = "CalendarManagerTests/CalendarManagerTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Release;
+		};
 		01E0103E15CC5E3A00B9AC9C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -285,6 +460,14 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		0183388D15CD6263003095F5 /* Build configuration list for PBXNativeTarget "CalendarManagerTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0183388E15CD6263003095F5 /* Debug */,
+				0183388F15CD6263003095F5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		01E0101C15CC5E3A00B9AC9C /* Build configuration list for PBXProject "CalendarManager" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -301,6 +484,7 @@
 				01E0104215CC5E3A00B9AC9C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
