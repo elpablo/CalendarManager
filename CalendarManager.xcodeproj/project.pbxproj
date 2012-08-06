@@ -54,6 +54,7 @@
 		0183388915CD6263003095F5 /* CalendarManagerTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CalendarManagerTests.h; sourceTree = "<group>"; };
 		0183388A15CD6263003095F5 /* CalendarManagerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CalendarManagerTests.m; sourceTree = "<group>"; };
 		0183388C15CD6263003095F5 /* CalendarManagerTests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CalendarManagerTests-Prefix.pch"; sourceTree = "<group>"; };
+		0183389D15D02DFA003095F5 /* ReadMe.mdown */ = {isa = PBXFileReference; lastKnownFileType = text; name = ReadMe.mdown; path = CalendarManager/ReadMe.mdown; sourceTree = "<group>"; };
 		01E0102215CC5E3A00B9AC9C /* CalendarManager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CalendarManager.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		01E0102615CC5E3A00B9AC9C /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		01E0102815CC5E3A00B9AC9C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -124,6 +125,7 @@
 		01E0101715CC5E3A00B9AC9C = {
 			isa = PBXGroup;
 			children = (
+				0183389D15D02DFA003095F5 /* ReadMe.mdown */,
 				01E0102C15CC5E3A00B9AC9C /* CalendarManager */,
 				0183388315CD6263003095F5 /* CalendarManagerTests */,
 				01E0102515CC5E3A00B9AC9C /* Frameworks */,
