@@ -157,7 +157,7 @@
     return [self extractCalendarsFromSourceArray:sources];
 }
 
-- (EKCalendar *)addCalendarWithSource:(EKSource *)source name:(NSString *)calName color:(UIColor *)color makeDefault:(BOOL)def error:(NSError **)error
+- (void)addCalendarWithSource:(EKSource *)source name:(NSString *)calName color:(UIColor *)color makeDefault:(BOOL)def error:(NSError **)error
 {
     EKCalendar *newCal = nil;
     if (source) {
@@ -167,16 +167,20 @@
         // Should be only one iCloud calendar source.
         newCal.source = source;
         
-        BOOL ok = [self.eventStore saveCalendar:newCal commit:YES error:error];
-        if (ok && def) {
-            [self.delegate calendarManager:self didCreateCalendarWithIdentifier:newCal.calendarIdentifier];
-            self.defaultCalendar = newCal;
+        [self.eventStore saveCalendar:newCal commit:YES error:error];
+        if (*error == nil) {
+            if (self.delegate && [self.delegate respondsToSelector:@selector(calendarManager:didCreateCalendar:)]) {
+                [self.delegate calendarManager:self didCreateCalendar:newCal];
+            }
+            if (def) {
+                self.defaultCalendar = newCal;
+            }
+        } else {
+            NSLog(@"%@", [*error localizedDescription]);
         }
     } else {
         NSLog(@"nil source passed!!");
     }
-    
-    return newCal;
 }
 
 #pragma mark - Events API
@@ -236,14 +240,14 @@
 - (void)addEventToCalendar:(EKCalendar *)cal withTitle:(NSString *)t location:(NSString *)loc startDate:(NSDate *)start endDate:(NSDate *)end description:(NSString *)note
 {
     // When add button is pushed, create an EKEventEditViewController to display the event.
-	EKEventEditViewController *addController = [[EKEventEditViewController alloc] initWithNibName:nil bundle:nil];
+	EKEventEditViewController *editEventController = [[EKEventEditViewController alloc] initWithNibName:nil bundle:nil];
 	
 	// set the addController's event store to the current event store.
-	addController.eventStore = self.eventStore;
-	addController.editViewDelegate = self;
+	editEventController.eventStore = self.eventStore;
+	editEventController.editViewDelegate = self;
 	
     // now that the event store has been assigned, the event is available and can be customized.
-    EKEvent *ev = addController.event;
+    EKEvent *ev = editEventController.event;
     ev.title = t;
     ev.location = loc;
     ev.startDate = start;
@@ -252,13 +256,19 @@
     ev.calendar = cal ? cal : self.defaultCalendar;
     ev.notes = note;
 
-    [self.delegate calendarManager:self didCreateEvent:ev];
-	// present EventsAddViewController as a modal view controller
-    [self.delegate calendarManager:self needToPresentController:addController];
+    if (self.delegate) {
+        if ([self.delegate respondsToSelector:@selector(calendarManager:didCreateEvent:)]) {
+            [self.delegate calendarManager:self didCreateEvent:ev];
+        }
+        if ([self.delegate respondsToSelector:@selector(calendarManager:needToPresentController:)]) {
+            // present EventsAddViewController as a modal view controller
+            [self.delegate calendarManager:self needToPresentController:editEventController];
+        }
+    }
 	
 #if __has_feature(objc_arc)
 #else
-	[addController release];
+	[editEventController release];
 #endif
 }
 
@@ -295,8 +305,10 @@
 			break;
 	}
     
-	// Dismiss the modal view controller
-	[self.delegate calendarManagerDidDismissCalendarEditController:self];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(calendarManagerDidDismissCalendarEditController:)]) {
+        // Dismiss the modal view controller
+        [self.delegate calendarManagerDidDismissCalendarEditController:self];
+    }
 }
 
 // Set the calendar edited by EKEventEditViewController to our chosen calendar - the default calendar.
