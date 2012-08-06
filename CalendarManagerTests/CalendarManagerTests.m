@@ -10,19 +10,26 @@
 
 #import "../CalendarManager/PQCalendarManager/PQCalendarManager.h"
 
-@interface CalendarManagerTests ()
+@interface CalendarManagerTests () <PQCalendarManagerDelegate>
 
 @property (nonatomic, strong) PQCalendarManager *manager;
+@property (nonatomic, strong) EKCalendar *pqCal;
 
 @end
 
 @implementation CalendarManagerTests
+
+- (void)calendarManager:(PQCalendarManager *)manager didCreateCalendar:(EKCalendar *)calendar
+{
+    self.pqCal = calendar;
+}
 
 - (void)setUp
 {
     [super setUp];
     
     self.manager = [PQCalendarManager sharedInstance];
+    [self.manager setDelegate:(id<PQCalendarManagerDelegate>)self];
     STAssertNotNil(self.manager, @"Some problem occourred during PQCalendarManager allocation");
 }
 
@@ -43,10 +50,10 @@
 
     // Add a new calendar to the local source.
     NSError *err;
-    EKCalendar *pqCal = [self.manager addCalendarWithSource:[sourcesLocal objectAtIndex:0] name:@"PQCalendar" color:[UIColor greenColor] makeDefault:YES error:&err];
-    STAssertNotNil(pqCal, @"Problem adding new calendar...");
+    [self.manager addCalendarWithSource:[sourcesLocal objectAtIndex:0] name:@"PQCalendar" color:[UIColor greenColor] makeDefault:YES error:&err];
+    STAssertNotNil(self.pqCal, @"Problem adding new calendar...");
     
-    BOOL res = [self.manager removeCalendar:pqCal error:&err];
+    BOOL res = [self.manager removeCalendar:self.pqCal error:&err];
     STAssertTrue(res, @"Problems removing calendar...");
 }
 
