@@ -112,6 +112,11 @@
     return NO;
 }
 
+- (NSArray *)calendarSources
+{
+    return self.eventStore.sources;
+}
+
 - (NSArray *)calendarSourcesOfType:(EKSourceType)type
 {
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"sourceType==%d", type];

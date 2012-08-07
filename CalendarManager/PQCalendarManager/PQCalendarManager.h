@@ -34,6 +34,9 @@
 
 /////////////////////// Calendar API ///////////////////////
 
+/// Returns all the calendar sources.
+- (NSArray *)calendarSources;
+
 /// Returns the array of calendar source given the source type (EKSourceTypeLocal, ...)
 - (NSArray *)calendarSourcesOfType:(EKSourceType)type;
 
