@@ -166,7 +166,11 @@
 {
     EKCalendar *newCal = nil;
     if (source) {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_6_0
         newCal = [EKCalendar calendarWithEventStore:self.eventStore];
+#else
+        newCal = [EKCalendar calendarForEntityType:EKEntityTypeEvent eventStore:self.eventStore];
+#endif
         newCal.title = calName;
         newCal.CGColor = [color CGColor];
         // Should be only one iCloud calendar source.
