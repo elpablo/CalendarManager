@@ -68,6 +68,12 @@
                          [[DemoItem alloc] initWithTitle:@"Month Events (default cal)" target:self andSelectoToExecute:@selector(showEventsForCurrentMonth)],
                          [[DemoItem alloc] initWithTitle:@"New Event (to TestCalendar)" target:self andSelectoToExecute:@selector(addNewEvent)],
                          nil];
+    
+    NSDictionary *dic = @{@"title":@"TestCalendar", @"type":[NSNumber numberWithInt:EKCalendarTypeLocal]};
+    NSMutableArray *arr = [[PQCalendarManager sharedInstance] calendarsWithTitlesAndTypes:@[dic]];
+    if ([arr count] != 0) {
+        self.testCalendar = [arr objectAtIndex:0];
+    }
 }
 
 - (void)viewDidUnload
@@ -111,12 +117,6 @@
 {
     NSLog(@"%s", __FUNCTION__);
     NSLog(@"Event created: %@", ev);
-}
-
-- (void)calendarManager:(PQCalendarManager *)manager needToPresentController:(EKEventEditViewController *)controller
-{
-    NSLog(@"%s", __FUNCTION__);
-    [self presentModalViewController:controller animated:YES];
 }
 
 - (void)calendarManagerDidDismissCalendarEditController:(PQCalendarManager *)manager
@@ -289,7 +289,8 @@
 {
     NSLog(@"%s", __FUNCTION__);
     if (self.testCalendar) {
-        [self.calendarManager addEventToCalendar:self.testCalendar withTitle:@"Test Event" location:@"My Home" startDate:[NSDate date] endDate:[NSDate date] description:@"Event taht shows create event API"];
+        EKEventEditViewController *controller = [self.calendarManager addEventToCalendar:self.testCalendar withTitle:@"Test Event" location:@"My Home" startDate:[NSDate date] endDate:[NSDate date] description:@"Event taht shows create event API"];
+        [self presentModalViewController:controller animated:YES];
     } else {
         NSLog(@"Before this, select \"New calendar (TestCalendar)\" to create test calendar");
     }
