@@ -30,6 +30,7 @@
 @property (strong) NSPredicate *predicateTitleType;
 @property BOOL ios6;
 
+- (void)storeChanged:(NSNotification *)notification;
 - (NSArray *)extractCalendarsFromSourceArray:(NSArray *)sources;
 
 @end
@@ -50,6 +51,10 @@
 
     // Initialize an event store object with the init method. Initilize the array for events.
     self.eventStore = [[EKEventStore alloc] init];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(storeChanged:)
+                                                 name:EKEventStoreChangedNotification
+                                               object:self.eventStore];
     if (self.ios6) {
         [self.eventStore requestAccessToEntityType:EKEntityTypeEvent completion:^(BOOL granted, NSError *error) {
             if (granted) {
@@ -114,6 +119,25 @@
 
 #pragma mark - Calendar API
 
+- (void)storeChanged:(NSNotification *)notification
+{
+    NSString *info = [notification.userInfo description];
+    NSRange range = [info rangeOfString:@"x-apple-eventkit:///Calendar"];
+    if (range.location != NSNotFound) {
+        if (self.delegate && [self.delegate respondsToSelector:@selector(calendarManagerInvalidatedCalendars:)]) {
+            [self.delegate calendarManagerInvalidatedCalendars:self];
+        }
+        return;
+    }
+    range = [info rangeOfString:@"x-apple-eventkit:///Event"];
+    if (range.location != NSNotFound) {
+        if (self.delegate && [self.delegate respondsToSelector:@selector(calendarManagerInvalidatedEvents:)]) {
+            [self.delegate calendarManagerInvalidatedEvents:self];
+        }
+        return;
+    }
+}
+
 - (BOOL)iCloudCalendarIsPresent
 {
     NSDictionary *variables = @{@"CALENDAR_TITLE":@"iCloud",
@@ -147,15 +171,6 @@
         return result;
     }
     return NO;
-}
-
-- (NSArray *)allCalendars
-{
-    if (self.ios6) {
-        return [self.eventStore calendarsForEntityType:EKEntityTypeEvent];
-    } else {
-        return [self.eventStore calendars];
-    }
 }
 
 - (NSArray *)calendarSources
@@ -196,22 +211,27 @@
 
 - (NSArray *)extractCalendarsFromSourceArray:(NSArray *)sources
 {
-    NSArray *calendars = nil;
-    if ([sources count] != 0) {
-        NSMutableArray *allCalendars = [[NSMutableArray alloc] init];
-        for (EKSource *source in sources) {
-            [allCalendars addObjectsFromArray:[[source calendarsForEntityType:EKEntityTypeEvent] allObjects]];
-        }
-        calendars = [allCalendars copy];
+    NSMutableArray *allCalendars = nil;
 #if __has_feature(objc_arc)
+    allCalendars = [[NSMutableArray alloc] init];
 #else
-        [allLocalCalendars release];
+    allCalendars = [[[NSMutableArray alloc] init] autorelease];
 #endif
+
+    [sources enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        EKSource *source = obj;
+        [allCalendars addObjectsFromArray:[[source calendarsForEntityType:EKEntityTypeEvent] allObjects]];
+    }];
+    return [allCalendars count] != 0 ? allCalendars : nil;
+}
+
+- (NSArray *)allCalendars
+{
+    if (self.ios6) {
+        return [self.eventStore calendarsForEntityType:EKEntityTypeEvent];
     } else {
-        NSLog(@"Empty sources passed...");
+        return [self.eventStore calendars];
     }
-    
-    return calendars;
 }
 
 - (NSArray *)localCalendars

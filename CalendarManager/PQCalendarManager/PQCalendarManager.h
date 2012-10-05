@@ -98,6 +98,11 @@
 @end
 
 
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// PQCalendarManagerDelegate protocol
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 @protocol PQCalendarManagerDelegate <NSObject>
 
 @optional
@@ -107,6 +112,12 @@
 
 /// Inform the delegate that a new event has been created.
 - (void)calendarManager:(PQCalendarManager *)adder didCreateEvent:(EKEvent *)ev;
+
+/// Inform the delegate that calendars are invalid (something is changed into the Calendar DB), so needs a refresh.
+- (void)calendarManagerInvalidatedCalendars:(PQCalendarManager *)manager;
+
+/// Inform the delegate that events are invalid (something is changed into the Calendar DB), so needs a refresh.
+- (void)calendarManagerInvalidatedEvents:(PQCalendarManager *)manager;
 
 /// Ask the user to dismiss the EKEventEditViewController needs to be dismissed because the user finished to edit the created event.
 - (void)calendarManagerDidDismissCalendarEditController:(PQCalendarManager *)manager;
