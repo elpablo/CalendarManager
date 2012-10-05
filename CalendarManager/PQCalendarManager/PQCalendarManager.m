@@ -24,6 +24,10 @@
 
 @property (nonatomic, strong) EKEventStore *eventStore;
 @property (nonatomic, strong) EKCalendar *defaultCalendar;
+@property (strong) NSPredicate *predicateTitle;
+@property (strong) NSPredicate *predicateType;
+@property (strong) NSPredicate *predicateTitleType;
+@property BOOL ios6;
 
 - (NSArray *)extractCalendarsFromSourceArray:(NSArray *)sources;
 
@@ -36,12 +40,35 @@
 @synthesize defaultCalendar = _defaultCalendar;
 @synthesize delegate = _delegate;
 
+
 - (void)_initParameters {
+    NSString *version = [[UIDevice currentDevice] systemVersion];
+    self.ios6 = [version floatValue] >= 6.0;
+
+    self.defaultCalendar = nil;
+
     // Initialize an event store object with the init method. Initilize the array for events.
     self.eventStore = [[EKEventStore alloc] init];
+    if (self.ios6) {
+        [self.eventStore requestAccessToEntityType:EKEntityTypeEvent completion:^(BOOL granted, NSError *error) {
+            if (granted) {
+                // Get the default calendar from store.
+                self.defaultCalendar = [self.eventStore defaultCalendarForNewEvents];
+            }
+        }];
+    } else {
+        // Get the default calendar from store.
+        self.defaultCalendar = [self.eventStore defaultCalendarForNewEvents];
+    }
+
+    NSString *predicateTitleString = [NSString stringWithFormat:@"title == $CALENDAR_TITLE"];
+    _predicateTitle = [NSPredicate predicateWithFormat:predicateTitleString];
     
-    // Get the default calendar from store.
-    self.defaultCalendar = [self.eventStore defaultCalendarForNewEvents];
+    NSString *predicateTypeString = [NSString stringWithFormat:@"sourceType == $CALENDAR_TYPE"];
+    _predicateType = [NSPredicate predicateWithFormat:predicateTypeString];
+    
+    NSString *predicateTitleTypeString = [NSString stringWithFormat:@"(title == $CALENDAR_TITLE) AND (sourceType == $CALENDAR_TYPE)"];
+    _predicateTitleType = [NSPredicate predicateWithFormat:predicateTitleTypeString];
 }
 
 + (PQCalendarManager *)sharedInstance {
@@ -85,19 +112,25 @@
 
 - (BOOL)iCloudCalendarIsPresent
 {
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"sourceType==%d && title==%@", EKSourceTypeCalDAV, @"iCloud"];
-    NSArray *sourceTypeArr = [self.eventStore.sources filteredArrayUsingPredicate:predicate];
+    NSDictionary *variables = @{@"CALENDAR_TITLE":@"iCloud",
+                                @"CALENDAR_TYPE":[NSNumber numberWithInt:EKSourceTypeCalDAV]};
+    NSPredicate *localPredicate = [self.predicateTitleType predicateWithSubstitutionVariables:variables];
+    NSArray *sourceTypeArr = [self.eventStore.sources filteredArrayUsingPredicate:localPredicate];
     return [sourceTypeArr count] != 0;
 }
 
 - (void)setDefaultCalendarWithName:(NSString *)calName
 {
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"title==%@", calName];
-    NSArray *cal = [self.eventStore.calendars filteredArrayUsingPredicate:predicate];
+    NSDictionary *variables = @{@"CALENDAR_TITLE":calName};
+    NSPredicate *localPredicate = [self.predicateTitle predicateWithSubstitutionVariables:variables];
+    NSArray *evCal = [self allCalendars];
+    NSArray *cal = [evCal filteredArrayUsingPredicate:localPredicate];
     if ([cal count] == 1) {
         self.defaultCalendar = (EKCalendar *)[cal objectAtIndex:0];
     } else if ([cal count] > 1) {
         NSLog(@"Too many calendars with this name: %@", [cal description]);
+    } else {
+        NSLog(@"'%@' calendar doesn't exists.", calName);
     }
 }
 
@@ -112,6 +145,15 @@
     return NO;
 }
 
+- (NSArray *)allCalendars
+{
+    if (self.ios6) {
+        return [self.eventStore calendarsForEntityType:EKEntityTypeEvent];
+    } else {
+        return [self.eventStore calendars];
+    }
+}
+
 - (NSArray *)calendarSources
 {
     return self.eventStore.sources;
@@ -119,9 +161,33 @@
 
 - (NSArray *)calendarSourcesOfType:(EKSourceType)type
 {
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"sourceType==%d", type];
-    NSArray *sourceTypeArr = [self.eventStore.sources filteredArrayUsingPredicate:predicate];
+    NSDictionary *variables = @{@"CALENDAR_TYPE":[NSNumber numberWithInt:type]};
+    NSPredicate *localPredicate = [self.predicateType predicateWithSubstitutionVariables:variables];
+    NSArray *sourceTypeArr = [self.eventStore.sources filteredArrayUsingPredicate:localPredicate];
     return sourceTypeArr;
+}
+
+- (NSMutableArray *)calendarsWithTitlesAndTypes:(NSArray *)title_type_dic
+{
+    NSArray *allCal = [self allCalendars];
+    NSMutableArray *resultArray = nil;
+#if __has_feature(objc_arc)
+    resultArray = [[NSMutableArray alloc] init];
+#else
+    resultArray = [[[NSMutableArray alloc] init] autorelease];
+#endif
+    [title_type_dic enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        NSString *calName = [obj objectForKey:@"title"];
+        NSInteger type = [[obj objectForKey:@"type"] integerValue];
+        NSDictionary *variables = @{@"CALENDAR_TITLE":calName,
+                                    @"CALENDAR_TYPE":[NSNumber numberWithInt:type]};
+        NSPredicate *localPredicate = [self.predicateTitleType predicateWithSubstitutionVariables:variables];
+        NSArray *calTitleTypeArr = [allCal filteredArrayUsingPredicate:localPredicate];
+        if ([calTitleTypeArr count] != 0) {
+            [resultArray addObjectsFromArray:calTitleTypeArr];
+        }
+    }];
+    return resultArray;
 }
 
 - (NSArray *)extractCalendarsFromSourceArray:(NSArray *)sources
@@ -130,7 +196,7 @@
     if ([sources count] != 0) {
         NSMutableArray *allCalendars = [[NSMutableArray alloc] init];
         for (EKSource *source in sources) {
-            [allCalendars addObjectsFromArray:[source.calendars allObjects]];
+            [allCalendars addObjectsFromArray:[[source calendarsForEntityType:EKEntityTypeEvent] allObjects]];
         }
         calendars = [allCalendars copy];
 #if __has_feature(objc_arc)
@@ -166,11 +232,12 @@
 {
     EKCalendar *newCal = nil;
     if (source) {
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_6_0
-        newCal = [EKCalendar calendarWithEventStore:self.eventStore];
-#else
-        newCal = [EKCalendar calendarForEntityType:EKEntityTypeEvent eventStore:self.eventStore];
-#endif
+        if (self.ios6) {
+            newCal = [EKCalendar calendarForEntityType:EKEntityTypeEvent eventStore:self.eventStore];
+        } else {
+            newCal = [EKCalendar calendarWithEventStore:self.eventStore];
+        }
+
         newCal.title = calName;
         newCal.CGColor = [color CGColor];
         // Should be only one iCloud calendar source.

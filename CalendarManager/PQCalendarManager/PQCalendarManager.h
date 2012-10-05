@@ -40,6 +40,9 @@
 /// Returns the array of calendar source given the source type (EKSourceTypeLocal, ...)
 - (NSArray *)calendarSourcesOfType:(EKSourceType)type;
 
+/// Returns all the available calendars (local, CalDVA...).
+- (NSArray *)allCalendars;
+
 /// Commodity method that returns the array of local calendars.
 - (NSArray *)localCalendars;
 
@@ -48,6 +51,9 @@
 
 /// Commodity method that return the array of birthdays calendars.
 - (NSArray *)birthdaysCalendars;
+
+/// Returns the list of calendars associated with the {title, type} NSDictionary list passed as argument.
+- (NSMutableArray *)calendarsWithTitlesAndTypes:(NSArray *)title_type_dic;
 
 /// Allows to set a default calendar with a given name.
 - (void)setDefaultCalendarWithName:(NSString *)calName;
