@@ -18,6 +18,7 @@
 		0183389215CD6813003095F5 /* PQCalendarManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 01E0104915CC5E8A00B9AC9C /* PQCalendarManager.m */; };
 		0183389315CD6A96003095F5 /* EventKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01E0104315CC5E4E00B9AC9C /* EventKit.framework */; };
 		0183389415CD6AB9003095F5 /* EventKitUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01E0104415CC5E4E00B9AC9C /* EventKitUI.framework */; };
+		01876A65161EBD2E00C97126 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 01876A64161EBD2E00C97126 /* Default-568h@2x.png */; };
 		01E0102715CC5E3A00B9AC9C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01E0102615CC5E3A00B9AC9C /* UIKit.framework */; };
 		01E0102915CC5E3A00B9AC9C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01E0102815CC5E3A00B9AC9C /* Foundation.framework */; };
 		01E0102B15CC5E3A00B9AC9C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01E0102A15CC5E3A00B9AC9C /* CoreGraphics.framework */; };
@@ -55,6 +56,7 @@
 		0183388A15CD6263003095F5 /* CalendarManagerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CalendarManagerTests.m; sourceTree = "<group>"; };
 		0183388C15CD6263003095F5 /* CalendarManagerTests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CalendarManagerTests-Prefix.pch"; sourceTree = "<group>"; };
 		0183389D15D02DFA003095F5 /* ReadMe.mdown */ = {isa = PBXFileReference; lastKnownFileType = text; path = ReadMe.mdown; sourceTree = "<group>"; };
+		01876A64161EBD2E00C97126 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-568h@2x.png"; path = "../Default-568h@2x.png"; sourceTree = "<group>"; };
 		01E0102215CC5E3A00B9AC9C /* CalendarManager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CalendarManager.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		01E0102615CC5E3A00B9AC9C /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		01E0102815CC5E3A00B9AC9C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -177,6 +179,7 @@
 		01E0102D15CC5E3A00B9AC9C /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				01876A64161EBD2E00C97126 /* Default-568h@2x.png */,
 				01E0102E15CC5E3A00B9AC9C /* CalendarManager-Info.plist */,
 				01E0102F15CC5E3A00B9AC9C /* InfoPlist.strings */,
 				01E0103215CC5E3A00B9AC9C /* main.m */,
@@ -276,6 +279,7 @@
 				01E0103115CC5E3A00B9AC9C /* InfoPlist.strings in Resources */,
 				01E0103D15CC5E3A00B9AC9C /* ViewController.xib in Resources */,
 				0183382715CD2289003095F5 /* ItemsViewerViewController.xib in Resources */,
+				01876A65161EBD2E00C97126 /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -469,6 +473,7 @@
 				0183388F15CD6263003095F5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		01E0101C15CC5E3A00B9AC9C /* Build configuration list for PBXProject "CalendarManager" */ = {
 			isa = XCConfigurationList;
