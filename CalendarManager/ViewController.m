@@ -252,7 +252,7 @@
 {
     NSLog(@"%s", __FUNCTION__);
     
-    NSArray *today = [self.calendarManager eventsForTodayInCalendar:nil];
+    NSArray *today = [self.calendarManager eventsForTodayInCalendars:nil];
     NSLog(@"%@", today);
     
     self.viewer = [self viewerWithTitle:@"Today Events" itemsToShow:today];
@@ -264,7 +264,7 @@
     NSLog(@"%s", __FUNCTION__);
     
     if (self.testCalendar) {
-        NSArray *today = [self.calendarManager eventsForTodayInCalendar:self.testCalendar];
+        NSArray *today = [self.calendarManager eventsForTodayInCalendars:@[self.testCalendar]];
         NSLog(@"%@", today);
         
         self.viewer = [self viewerWithTitle:@"Today Events in TestCalendar" itemsToShow:today];
@@ -277,7 +277,7 @@
 - (void)showEventsForCurrentMonth
 {
     NSLog(@"%s", __FUNCTION__);
-    NSArray *events = [self.calendarManager eventsForCurrentMonthInCalendar:nil];
+    NSArray *events = [self.calendarManager eventsForCurrentMonthInCalendars:nil];
     
     self.viewer = [self viewerWithTitle:@"Events in current month" itemsToShow:events];
     [self showItemViewer];
