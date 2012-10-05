@@ -125,6 +125,16 @@
     [self dismissModalViewControllerAnimated:YES];
 }
 
+- (void)calendarManagerInvalidatedCalendars:(PQCalendarManager *)manager
+{
+    NSLog(@"%s", __FUNCTION__);
+}
+
+- (void)calendarManagerInvalidatedEvents:(PQCalendarManager *)manager
+{
+    NSLog(@"%s", __FUNCTION__);
+}
+
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
