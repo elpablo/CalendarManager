@@ -25,7 +25,8 @@
 @property (nonatomic, strong) EKEventStore *eventStore;
 @property (nonatomic, strong) EKCalendar *defaultCalendar;
 @property (strong) NSPredicate *predicateTitle;
-@property (strong) NSPredicate *predicateType;
+@property (strong) NSPredicate *predicateSourceType;
+@property (strong) NSPredicate *predicateTitleSourceType;
 @property (strong) NSPredicate *predicateTitleType;
 @property BOOL ios6;
 
@@ -64,10 +65,13 @@
     NSString *predicateTitleString = [NSString stringWithFormat:@"title == $CALENDAR_TITLE"];
     _predicateTitle = [NSPredicate predicateWithFormat:predicateTitleString];
     
-    NSString *predicateTypeString = [NSString stringWithFormat:@"sourceType == $CALENDAR_TYPE"];
-    _predicateType = [NSPredicate predicateWithFormat:predicateTypeString];
+    NSString *predicateSourceTypeString = [NSString stringWithFormat:@"sourceType == $CALENDARSOURCE_TYPE"];
+    _predicateSourceType = [NSPredicate predicateWithFormat:predicateSourceTypeString];
     
-    NSString *predicateTitleTypeString = [NSString stringWithFormat:@"(title == $CALENDAR_TITLE) AND (sourceType == $CALENDAR_TYPE)"];
+    NSString *predicateTitleSourceTypeString = [NSString stringWithFormat:@"(title == $CALENDAR_TITLE) AND (sourceType == $CALENDARSOURCE_TYPE)"];
+    _predicateTitleSourceType = [NSPredicate predicateWithFormat:predicateTitleSourceTypeString];
+    
+    NSString *predicateTitleTypeString = [NSString stringWithFormat:@"(title == $CALENDAR_TITLE) AND (type == $CALENDAR_TYPE)"];
     _predicateTitleType = [NSPredicate predicateWithFormat:predicateTitleTypeString];
 }
 
@@ -113,8 +117,8 @@
 - (BOOL)iCloudCalendarIsPresent
 {
     NSDictionary *variables = @{@"CALENDAR_TITLE":@"iCloud",
-                                @"CALENDAR_TYPE":[NSNumber numberWithInt:EKSourceTypeCalDAV]};
-    NSPredicate *localPredicate = [self.predicateTitleType predicateWithSubstitutionVariables:variables];
+                                @"CALENDARSOURCE_TYPE":[NSNumber numberWithInt:EKSourceTypeCalDAV]};
+    NSPredicate *localPredicate = [self.predicateTitleSourceType predicateWithSubstitutionVariables:variables];
     NSArray *sourceTypeArr = [self.eventStore.sources filteredArrayUsingPredicate:localPredicate];
     return [sourceTypeArr count] != 0;
 }
@@ -161,8 +165,8 @@
 
 - (NSArray *)calendarSourcesOfType:(EKSourceType)type
 {
-    NSDictionary *variables = @{@"CALENDAR_TYPE":[NSNumber numberWithInt:type]};
-    NSPredicate *localPredicate = [self.predicateType predicateWithSubstitutionVariables:variables];
+    NSDictionary *variables = @{@"CALENDARSOURCE_TYPE":[NSNumber numberWithInt:type]};
+    NSPredicate *localPredicate = [self.predicateSourceType predicateWithSubstitutionVariables:variables];
     NSArray *sourceTypeArr = [self.eventStore.sources filteredArrayUsingPredicate:localPredicate];
     return sourceTypeArr;
 }
@@ -178,9 +182,9 @@
 #endif
     [title_type_dic enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         NSString *calName = [obj objectForKey:@"title"];
-        NSInteger type = [[obj objectForKey:@"type"] integerValue];
+        NSNumber *type = [obj objectForKey:@"type"];
         NSDictionary *variables = @{@"CALENDAR_TITLE":calName,
-                                    @"CALENDAR_TYPE":[NSNumber numberWithInt:type]};
+                                    @"CALENDAR_TYPE":type};
         NSPredicate *localPredicate = [self.predicateTitleType predicateWithSubstitutionVariables:variables];
         NSArray *calTitleTypeArr = [allCal filteredArrayUsingPredicate:localPredicate];
         if ([calTitleTypeArr count] != 0) {
@@ -261,18 +265,23 @@
 
 #pragma mark - Events API
 
-- (NSArray *)eventsForTodayInCalendar:(EKCalendar *)cal
+- (NSArray *)eventsForTodayInCalendars:(NSArray *)calendars
 {
-    // Now is the start date
-	NSDate *startDate = [NSDate date];
-	
-	// endDate is 1 day = 60*60*24 seconds = 86400 seconds from startDate
-	NSDate *endDate = [NSDate dateWithTimeIntervalSinceNow:86400];
-    
-	return [self eventsForCalendar:cal fromDate:startDate toDate:endDate];
+    NSCalendar *gregorian = [NSCalendar currentCalendar];
+    NSDateComponents *components = [gregorian components:(NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit) fromDate:[NSDate date]];
+    [components setHour:0];
+    [components setMinute:0];
+    [components setSecond:0];
+    NSDate *startDate = [gregorian dateFromComponents:components];
+    [components setHour:23];
+    [components setMinute:59];
+    [components setSecond:59];
+    NSDate *endDate = [gregorian dateFromComponents:components];
+
+	return [self eventsForCalendars:calendars fromDate:startDate toDate:endDate];
 }
 
-- (NSArray *)eventsForCurrentMonthInCalendar:(EKCalendar *)cal
+- (NSArray *)eventsForCurrentMonthInCalendars:(NSArray *)calendars
 {
     // Retrieve the calendar to calculate the first and last day of the current month
     NSCalendar *calendar = [NSCalendar currentCalendar];
@@ -281,23 +290,28 @@
     NSDateComponents *components = [calendar components: NSMonthCalendarUnit|NSYearCalendarUnit
                                                     fromDate:[NSDate date]];
     components.day = 1;
+    [components setHour:0];
+    [components setMinute:0];
+    [components setSecond:0];
     NSDate *startDate = [calendar dateFromComponents: components];
 
     NSRange range = [calendar rangeOfUnit:NSDayCalendarUnit inUnit:NSMonthCalendarUnit
                                        forDate:startDate];
     components.day = range.length;
+    [components setHour:23];
+    [components setMinute:59];
+    [components setSecond:59];
     
 	// endDate is last day of month
 	NSDate *endDate = [calendar dateFromComponents: components];
 
-    return [self eventsForCalendar:cal fromDate:startDate toDate:endDate];
+    return [self eventsForCalendars:calendars fromDate:startDate toDate:endDate];
 }
 
-- (NSArray *)eventsForCalendar:(EKCalendar *)cal fromDate:(NSDate *)startDate toDate:(NSDate *)endDate
+- (NSArray *)eventsForCalendars:(NSArray *)calendars fromDate:(NSDate *)startDate toDate:(NSDate *)endDate
 {
+	NSArray *calendarArray = calendars ? calendars : [NSArray arrayWithObject:_defaultCalendar];
 	// Create the predicate. Pass it the calendar.
-    EKCalendar *calendar = cal ? cal : _defaultCalendar;
-	NSArray *calendarArray = [NSArray arrayWithObject:calendar];
 	NSPredicate *predicate = [self.eventStore predicateForEventsWithStartDate:startDate endDate:endDate
                                                                     calendars:calendarArray];
 	

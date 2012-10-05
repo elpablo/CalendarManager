@@ -70,14 +70,14 @@
 
 /////////////////////// Event API ///////////////////////
 
-/// Show the events for today from the given calendar. Pass nil to fetch events from default calendar.
-- (NSArray *)eventsForTodayInCalendar:(EKCalendar *)cal;
+/// Show the events for today from the given calendar array. Pass nil to fetch events from default calendar.
+- (NSArray *)eventsForTodayInCalendars:(NSArray *)calendars;
 
-/// Show the events for current month from the given calendar. Pass nil to fetch events from default calendar.
-- (NSArray *)eventsForCurrentMonthInCalendar:(EKCalendar *)cal;
+/// Show the events for current month from the given calendar array. Pass nil to fetch events from default calendar.
+- (NSArray *)eventsForCurrentMonthInCalendars:(NSArray *)calendars;
 
-/// fetch all the events between the startDate and endDate associated to the given calendar.
-- (NSArray *)eventsForCalendar:(EKCalendar *)cal fromDate:(NSDate *)startDate toDate:(NSDate *)endDate;
+/// fetch all the events between the startDate and endDate associated to the given calendar array.
+- (NSArray *)eventsForCalendars:(NSArray *)calendars fromDate:(NSDate *)startDate toDate:(NSDate *)endDate;
 
 /// Allows to create a new event with given parameters.
 /**
