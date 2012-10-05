@@ -25,6 +25,7 @@
 - (void)showItemViewer;
 
 // Calendar API demo methods
+- (void)showAllCalendars;
 - (void)showLocalCalendars;
 - (void)showCalDAVCalendars;
 - (void)showBirthdaysCalendars;
@@ -52,6 +53,7 @@
     self.testCalendar = nil;
 
     _calendarAPIExamples = [NSArray arrayWithObjects:
+                            [[DemoItem alloc] initWithTitle:@"All Calendars" target:self andSelectoToExecute:@selector(showAllCalendars)],
                             [[DemoItem alloc] initWithTitle:@"Local Calendars" target:self andSelectoToExecute:@selector(showLocalCalendars)],
                             [[DemoItem alloc] initWithTitle:@"CalDAV Calendars" target:self andSelectoToExecute:@selector(showCalDAVCalendars)],
                             [[DemoItem alloc] initWithTitle:@"Birthdays Calendars" target:self andSelectoToExecute:@selector(showBirthdaysCalendars)],
@@ -145,7 +147,8 @@
     }
     
     // Configure the cell...
-    NSString *text = indexPath.section == 0 ? [[self.calendarAPIExamples objectAtIndex:indexPath.row] title] : [[self.eventAPIExamples objectAtIndex:indexPath.row] title];
+    NSArray *sourceArray = indexPath.section == 0 ? self.calendarAPIExamples : self.eventAPIExamples;
+    NSString *text = [[sourceArray objectAtIndex:indexPath.row] title];
 
     [cell.textLabel setText:text];
     
@@ -168,6 +171,17 @@
 }
 
 #pragma mark - Demo Methods
+
+- (void)showAllCalendars
+{
+    NSLog(@"%s", __FUNCTION__);
+    
+    NSArray *allCal = [self.calendarManager allCalendars];
+    NSLog(@"%@", allCal);
+    
+    self.viewer = [self viewerWithTitle:@"All Calendars" itemsToShow:allCal];
+    [self showItemViewer];
+}
 
 - (void)showLocalCalendars
 {
