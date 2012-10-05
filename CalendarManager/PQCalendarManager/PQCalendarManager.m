@@ -327,10 +327,15 @@
     return [EKAlarm alarmWithRelativeOffset:offset];
 }
 
-- (void)addEventToCalendar:(EKCalendar *)cal withTitle:(NSString *)t location:(NSString *)loc startDate:(NSDate *)start endDate:(NSDate *)end description:(NSString *)note
+- (EKEventEditViewController *)addEventToCalendar:(EKCalendar *)cal withTitle:(NSString *)t location:(NSString *)loc startDate:(NSDate *)start endDate:(NSDate *)end description:(NSString *)note
 {
     // When add button is pushed, create an EKEventEditViewController to display the event.
-	EKEventEditViewController *editEventController = [[EKEventEditViewController alloc] initWithNibName:nil bundle:nil];
+	EKEventEditViewController *editEventController = nil;
+#if __has_feature(objc_arc)
+    editEventController = [[EKEventEditViewController alloc] initWithNibName:nil bundle:nil];
+#else
+    editEventController = [[[EKEventEditViewController alloc] initWithNibName:nil bundle:nil] autorelease];
+#endif
 	
 	// set the addController's event store to the current event store.
 	editEventController.eventStore = self.eventStore;
@@ -346,20 +351,7 @@
     ev.calendar = cal ? cal : self.defaultCalendar;
     ev.notes = note;
 
-    if (self.delegate) {
-        if ([self.delegate respondsToSelector:@selector(calendarManager:didCreateEvent:)]) {
-            [self.delegate calendarManager:self didCreateEvent:ev];
-        }
-        if ([self.delegate respondsToSelector:@selector(calendarManager:needToPresentController:)]) {
-            // present EventsAddViewController as a modal view controller
-            [self.delegate calendarManager:self needToPresentController:editEventController];
-        }
-    }
-	
-#if __has_feature(objc_arc)
-#else
-	[editEventController release];
-#endif
+    return editEventController;
 }
 
 - (BOOL)saveEvent:(EKEvent *)ev error:(NSError **)error
@@ -379,20 +371,26 @@
 	switch (action) {
 		case EKEventEditViewActionCanceled:
 			// Edit action canceled, do nothing. 
-			break;
+		break;
 			
-		case EKEventEditViewActionSaved:
+		case EKEventEditViewActionSaved: {
 			// When user hit "Done" button, save the newly created event to the event store
-            [self saveEvent:controller.event error:&error];
-			break;
+            BOOL ok = [self saveEvent:controller.event error:&error];
+            if (ok) {
+                if ([self.delegate respondsToSelector:@selector(calendarManager:didCreateEvent:)]) {
+                    [self.delegate calendarManager:self didCreateEvent:controller.event];
+                }
+            }
+        }
+		break;
 			
 		case EKEventEditViewActionDeleted:
 			// When deleting an event, remove the event from the event store
 			[controller.eventStore removeEvent:thisEvent span:EKSpanThisEvent error:&error];
-			break;
+		break;
 			
 		default:
-			break;
+		break;
 	}
     
     if (self.delegate && [self.delegate respondsToSelector:@selector(calendarManagerDidDismissCalendarEditController:)]) {

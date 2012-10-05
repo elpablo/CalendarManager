@@ -81,10 +81,9 @@
 
 /// Allows to create a new event with given parameters.
 /**
- calendarManager:didCreateEvent: and calendarManager:needToPresentController: will be called after that the new event has been created to inform 
- the delegate that the event has been created and that the edit event view controller should be presented to the user.
+ EKEventEditViewController pointer will be returned to the caller, so it can presented to the user as modal view controller or in a popover.
  */
-- (void)addEventToCalendar:(EKCalendar *)cal withTitle:(NSString *)t location:(NSString *)loc startDate:(NSDate *)start endDate:(NSDate *)end description:(NSString *)note;
+- (EKEventEditViewController *)addEventToCalendar:(EKCalendar *)cal withTitle:(NSString *)t location:(NSString *)loc startDate:(NSDate *)start endDate:(NSDate *)end description:(NSString *)note;
 
 /// This method allows to save the created event.
 /** 
@@ -108,9 +107,6 @@
 
 /// Inform the delegate that a new event has been created.
 - (void)calendarManager:(PQCalendarManager *)adder didCreateEvent:(EKEvent *)ev;
-
-/// Ask the delegate that the EKEventEditViewController has to be presented to the user. This is called afted that a new event has beed created and needs to be edited by the user.
-- (void)calendarManager:(PQCalendarManager *)manager needToPresentController:(EKEventEditViewController *)controller;
 
 /// Ask the user to dismiss the EKEventEditViewController needs to be dismissed because the user finished to edit the created event.
 - (void)calendarManagerDidDismissCalendarEditController:(PQCalendarManager *)manager;
