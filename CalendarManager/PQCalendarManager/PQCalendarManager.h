@@ -29,8 +29,13 @@
 
 @property (nonatomic, assign) id<PQCalendarManagerDelegate> delegate;
 
+typedef void (^AuthorizedCompletionHandler)(BOOL authorized);
+
+
 + (PQCalendarManager *)sharedInstance;
 
+/// Function used to grant access to the Calendar DB. Call this function as first call to the PQCalendarManager singleton.
+- (void)grantAccessWithComplitionHandler:(AuthorizedCompletionHandler)handler;
 
 /////////////////////// Calendar API ///////////////////////
 

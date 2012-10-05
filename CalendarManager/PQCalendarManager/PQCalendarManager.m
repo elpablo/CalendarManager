@@ -55,17 +55,7 @@
                                              selector:@selector(storeChanged:)
                                                  name:EKEventStoreChangedNotification
                                                object:self.eventStore];
-    if (self.ios6) {
-        [self.eventStore requestAccessToEntityType:EKEntityTypeEvent completion:^(BOOL granted, NSError *error) {
-            if (granted) {
-                // Get the default calendar from store.
-                self.defaultCalendar = [self.eventStore defaultCalendarForNewEvents];
-            }
-        }];
-    } else {
-        // Get the default calendar from store.
-        self.defaultCalendar = [self.eventStore defaultCalendarForNewEvents];
-    }
+    self.defaultCalendar = nil;
 
     NSString *predicateTitleString = [NSString stringWithFormat:@"title == $CALENDAR_TITLE"];
     _predicateTitle = [NSPredicate predicateWithFormat:predicateTitleString];
@@ -88,6 +78,23 @@
         [sharedInstance _initParameters];
     });
     return sharedInstance;
+}
+
+- (void)grantAccessWithComplitionHandler:(AuthorizedCompletionHandler)handler
+{
+    if (self.ios6) {
+        [self.eventStore requestAccessToEntityType:EKEntityTypeEvent completion:^(BOOL granted, NSError *error) {
+            if (granted) {
+                // Get the default calendar from store.
+                self.defaultCalendar = [self.eventStore defaultCalendarForNewEvents];
+            }
+            handler(granted);
+        }];
+    } else {
+        // Get the default calendar from store.
+        self.defaultCalendar = [self.eventStore defaultCalendarForNewEvents];
+        handler(YES);
+    }
 }
 
 #pragma mark - Memory Management
