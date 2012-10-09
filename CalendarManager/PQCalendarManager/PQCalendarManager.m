@@ -294,8 +294,13 @@
 
 - (NSArray *)eventsForTodayInCalendars:(NSArray *)calendars
 {
+    return [self eventsForDate:[NSDate date] inCalendars:calendars];
+}
+
+- (NSArray *)eventsForDate:(NSDate *)day inCalendars:(NSArray *)calendars
+{
     NSCalendar *gregorian = [NSCalendar currentCalendar];
-    NSDateComponents *components = [gregorian components:(NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit) fromDate:[NSDate date]];
+    NSDateComponents *components = [gregorian components:(NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit) fromDate:day];
     [components setHour:0];
     [components setMinute:0];
     [components setSecond:0];
@@ -304,26 +309,31 @@
     [components setMinute:59];
     [components setSecond:59];
     NSDate *endDate = [gregorian dateFromComponents:components];
-
+    
 	return [self eventsForCalendars:calendars fromDate:startDate toDate:endDate];
 }
 
 - (NSArray *)eventsForCurrentMonthInCalendars:(NSArray *)calendars
 {
+    return [self eventsForMonth:[NSDate date] inCalendars:calendars];
+}
+
+- (NSArray *)eventsForMonth:(NSDate *)day_in_month inCalendars:(NSArray *)calendars
+{
     // Retrieve the calendar to calculate the first and last day of the current month
     NSCalendar *calendar = [NSCalendar currentCalendar];
     [calendar setTimeZone:[NSTimeZone localTimeZone]];
-
+    
     NSDateComponents *components = [calendar components: NSMonthCalendarUnit|NSYearCalendarUnit
-                                                    fromDate:[NSDate date]];
+                                               fromDate:day_in_month];
     components.day = 1;
     [components setHour:0];
     [components setMinute:0];
     [components setSecond:0];
     NSDate *startDate = [calendar dateFromComponents: components];
-
+    
     NSRange range = [calendar rangeOfUnit:NSDayCalendarUnit inUnit:NSMonthCalendarUnit
-                                       forDate:startDate];
+                                  forDate:startDate];
     components.day = range.length;
     [components setHour:23];
     [components setMinute:59];
@@ -331,7 +341,7 @@
     
 	// endDate is last day of month
 	NSDate *endDate = [calendar dateFromComponents: components];
-
+    
     return [self eventsForCalendars:calendars fromDate:startDate toDate:endDate];
 }
 

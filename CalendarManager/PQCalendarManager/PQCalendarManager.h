@@ -78,8 +78,14 @@ typedef void (^AuthorizedCompletionHandler)(BOOL authorized);
 /// Show the events for today from the given calendar array. Pass nil to fetch events from default calendar.
 - (NSArray *)eventsForTodayInCalendars:(NSArray *)calendars;
 
+/// Show the events for a given date from the given calendar array. Pass nil to fetch events from default calendar.
+- (NSArray *)eventsForDate:(NSDate *)day inCalendars:(NSArray *)calendars;
+
 /// Show the events for current month from the given calendar array. Pass nil to fetch events from default calendar.
 - (NSArray *)eventsForCurrentMonthInCalendars:(NSArray *)calendars;
+
+/// Show the events for month containing the given date from the given calendar array. Pass nil to fetch events from default calendar.
+- (NSArray *)eventsForMonth:(NSDate *)day_in_month inCalendars:(NSArray *)calendars;
 
 /// fetch all the events between the startDate and endDate associated to the given calendar array.
 - (NSArray *)eventsForCalendars:(NSArray *)calendars fromDate:(NSDate *)startDate toDate:(NSDate *)endDate;
